@@ -68,7 +68,7 @@ const RSS_SOURCES: SourceConfig[] = [
     name: "ITmedia エンタープライズ",
     category: "news",
     type: "rss",
-    url: "https://rss.itmedia.co.jp/rss/2.0/itmediaenterprise.xml",
+    url: "https://rss.itmedia.co.jp/rss/2.0/enterprise.xml",
     limit: 5,
   },
   {
@@ -76,7 +76,7 @@ const RSS_SOURCES: SourceConfig[] = [
     name: "ZDNet Japan",
     category: "news",
     type: "rss",
-    url: "https://japan.zdnet.com/index.rdf",
+    url: "https://feeds.japan.zdnet.com/rss/zdnet/all.rdf",
     limit: 5,
   },
 ]
