@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto"
 import { saveArticle } from "../db.js"
 
-const LIMIT = 20
+const LIMIT = 5
 
 type ZennArticle = {
   id: number

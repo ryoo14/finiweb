@@ -12,7 +12,9 @@ export async function collectRss(source: SourceConfig): Promise<number> {
     const feed = await parser.parseURL(source.url)
     let count = 0
 
-    for (const item of feed.items) {
+    const items = source.limit ? feed.items.slice(0, source.limit) : feed.items
+
+    for (const item of items) {
       if (!item.title || !item.link) continue
 
       const id = createHash("sha256").update(item.link).digest("hex").slice(0, 16)

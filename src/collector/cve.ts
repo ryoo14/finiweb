@@ -39,8 +39,10 @@ export async function collectCVE(): Promise<number> {
     const res = await fetch(`${NVD_API}?${params}`, { headers })
     const data = (await res.json()) as { vulnerabilities?: { cve: NvdCve }[] }
 
+    const LIMIT = 5
     let count = 0
     for (const vuln of data.vulnerabilities ?? []) {
+      if (count >= LIMIT) break
       const cve = vuln.cve
       const cvssScore = extractCvss(cve.metrics)
 

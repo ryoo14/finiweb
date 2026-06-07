@@ -13,6 +13,7 @@ const RSS_SOURCES: SourceConfig[] = [
     category: "dev",
     type: "rss",
     url: "https://b.hatena.ne.jp/hotentry/it.rss",
+    limit: 5,
   },
   {
     id: "techcrunch-jp",
@@ -20,6 +21,7 @@ const RSS_SOURCES: SourceConfig[] = [
     category: "news",
     type: "rss",
     url: "https://jp.techcrunch.com/feed/",
+    limit: 5,
   },
   {
     id: "publickey",
@@ -27,6 +29,7 @@ const RSS_SOURCES: SourceConfig[] = [
     category: "news",
     type: "rss",
     url: "https://www.publickey1.jp/atom.xml",
+    limit: 5,
   },
   {
     id: "theregister",
@@ -34,6 +37,7 @@ const RSS_SOURCES: SourceConfig[] = [
     category: "news",
     type: "rss",
     url: "https://www.theregister.com/headlines.atom",
+    limit: 5,
   },
   {
     id: "arstechnica",
@@ -41,6 +45,7 @@ const RSS_SOURCES: SourceConfig[] = [
     category: "news",
     type: "rss",
     url: "https://feeds.arstechnica.com/arstechnica/index",
+    limit: 5,
   },
   {
     id: "bleepingcomputer",
@@ -48,6 +53,7 @@ const RSS_SOURCES: SourceConfig[] = [
     category: "security",
     type: "rss",
     url: "https://www.bleepingcomputer.com/feed/",
+    limit: 5,
   },
   {
     id: "darkreading",
@@ -55,6 +61,7 @@ const RSS_SOURCES: SourceConfig[] = [
     category: "security",
     type: "rss",
     url: "https://www.darkreading.com/rss.xml",
+    limit: 5,
   },
 ]
 

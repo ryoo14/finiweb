@@ -18,4 +18,5 @@ export type SourceConfig = {
   category: Category
   type: "rss" | "hn" | "github-trending" | "nvd"
   url?: string
+  limit?: number
 }

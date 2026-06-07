@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import { saveArticle } from "../db.js"
 
 const MIN_STOCKS = 50
-const LIMIT = 20
+const LIMIT = 5
 
 type QiitaItem = {
   id: string

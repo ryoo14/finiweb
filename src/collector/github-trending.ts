@@ -10,8 +10,10 @@ export async function collectGithubTrending(): Promise<number> {
     const html = await res.text()
     const $ = cheerio.load(html)
 
+    const LIMIT = 5
     let count = 0
     $("article.Box-row").each((_, el) => {
+      if (count >= LIMIT) return false
       const href = $(el).find("h2 a").attr("href")
       if (!href) return
 

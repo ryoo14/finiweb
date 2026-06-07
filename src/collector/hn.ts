@@ -1,13 +1,16 @@
 import { createHash } from "node:crypto"
 import { saveArticle } from "../db.js"
 
-const LIMIT = 30
+const LIMIT = 5
+const MIN_SCORE = 100
+const SCAN_SIZE = 60
 
 type HNItem = {
   type: string
   title: string
   url?: string
   time: number
+  score: number
 }
 
 export async function collectHN(): Promise<number> {
@@ -16,11 +19,14 @@ export async function collectHN(): Promise<number> {
     const ids = (await res.json()) as number[]
 
     let count = 0
-    for (const hnId of ids.slice(0, LIMIT)) {
+    for (const hnId of ids.slice(0, SCAN_SIZE)) {
+      if (count >= LIMIT) break
+
       const itemRes = await fetch(`https://hacker-news.firebaseio.com/v0/item/${hnId}.json`)
       const item = (await itemRes.json()) as HNItem
 
       if (!item || item.type !== "story" || !item.url || !item.title) continue
+      if (item.score < MIN_SCORE) continue
 
       const id = createHash("sha256").update(item.url).digest("hex").slice(0, 16)
       saveArticle({
