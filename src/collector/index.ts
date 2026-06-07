@@ -63,6 +63,22 @@ const RSS_SOURCES: SourceConfig[] = [
     url: "https://www.darkreading.com/rss.xml",
     limit: 5,
   },
+  {
+    id: "itmedia-enterprise",
+    name: "ITmedia エンタープライズ",
+    category: "news",
+    type: "rss",
+    url: "https://rss.itmedia.co.jp/rss/2.0/itmediaenterprise.xml",
+    limit: 5,
+  },
+  {
+    id: "zdnet-japan",
+    name: "ZDNet Japan",
+    category: "news",
+    type: "rss",
+    url: "https://japan.zdnet.com/index.rdf",
+    limit: 5,
+  },
 ]
 
 export async function runCollector(): Promise<Record<string, number>> {
