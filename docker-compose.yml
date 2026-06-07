@@ -1,0 +1,16 @@
+services:
+  finiweb:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      PORT: "3000"
+      DB_PATH: /app/data/finiweb.db
+      TZ: Asia/Tokyo
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
+      NVD_API_KEY: ${NVD_API_KEY:-}
+      COLLECT_CRON: ${COLLECT_CRON:-0 7 * * *}
+      NOTIFY_CRON: ${NOTIFY_CRON:-0 8 * * *}
+    restart: unless-stopped
