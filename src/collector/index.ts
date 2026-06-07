@@ -2,17 +2,11 @@ import type { SourceConfig } from "../types.js"
 import { collectCVE } from "./cve.js"
 import { collectGithubTrending } from "./github-trending.js"
 import { collectHN } from "./hn.js"
+import { collectQiita } from "./qiita.js"
 import { collectRss } from "./rss.js"
+import { collectZenn } from "./zenn.js"
 
 const RSS_SOURCES: SourceConfig[] = [
-  { id: "zenn", name: "Zenn", category: "dev", type: "rss", url: "https://zenn.dev/feed" },
-  {
-    id: "qiita",
-    name: "Qiita",
-    category: "dev",
-    type: "rss",
-    url: "https://qiita.com/popular-items/feed",
-  },
   {
     id: "hatebu",
     name: "はてなブックマーク テクノロジー",
@@ -74,6 +68,14 @@ export async function runCollector(): Promise<Record<string, number>> {
     console.log(` ${n}`)
     results[source.id] = n
   }
+
+  process.stdout.write("  Zenn (trending)...")
+  results.zenn = await collectZenn()
+  console.log(` ${results.zenn}`)
+
+  process.stdout.write("  Qiita (trending)...")
+  results.qiita = await collectQiita()
+  console.log(` ${results.qiita}`)
 
   process.stdout.write("  Hacker News...")
   results.hn = await collectHN()
