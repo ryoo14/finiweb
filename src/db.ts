@@ -1,20 +1,20 @@
 import { mkdirSync } from "node:fs"
 import { dirname, join } from "node:path"
+import { DatabaseSync } from "node:sqlite"
 import { fileURLToPath } from "node:url"
-import Database from "better-sqlite3"
 import type { Article, Category } from "./types.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DB_PATH = process.env.DB_PATH ?? join(__dirname, "..", "data", "finiweb.db")
 
-let _db: Database.Database | null = null
+let _db: DatabaseSync | null = null
 
-function getDb(): Database.Database {
+function getDb(): DatabaseSync {
   if (!_db) {
     mkdirSync(dirname(DB_PATH), { recursive: true })
-    _db = new Database(DB_PATH)
-    _db.pragma("journal_mode = WAL")
+    _db = new DatabaseSync(DB_PATH)
     _db.exec(`
+      PRAGMA journal_mode = WAL;
       CREATE TABLE IF NOT EXISTS articles (
         id           TEXT PRIMARY KEY,
         title        TEXT NOT NULL,
@@ -81,21 +81,21 @@ export function getArticlesByDate(date: string, category?: Category): Article[] 
   const rows = category
     ? (db
         .prepare(`
-        SELECT * FROM articles
-        WHERE date(collected_at) = ? AND category = ?
-        ORDER BY
-          CASE category WHEN 'security' THEN 0 ELSE 1 END,
-          published_at DESC
-      `)
+          SELECT * FROM articles
+          WHERE date(collected_at) = ? AND category = ?
+          ORDER BY
+            CASE category WHEN 'security' THEN 0 ELSE 1 END,
+            published_at DESC
+        `)
         .all(date, category) as ArticleRow[])
     : (db
         .prepare(`
-        SELECT * FROM articles
-        WHERE date(collected_at) = ?
-        ORDER BY
-          CASE category WHEN 'security' THEN 0 ELSE 1 END,
-          published_at DESC
-      `)
+          SELECT * FROM articles
+          WHERE date(collected_at) = ?
+          ORDER BY
+            CASE category WHEN 'security' THEN 0 ELSE 1 END,
+            published_at DESC
+        `)
         .all(date) as ArticleRow[])
   return rows.map(rowToArticle)
 }
@@ -105,8 +105,8 @@ export function getAvailableDates(): string[] {
   return (
     db
       .prepare(`
-    SELECT DISTINCT date(collected_at) AS d FROM articles ORDER BY d DESC LIMIT 30
-  `)
+        SELECT DISTINCT date(collected_at) AS d FROM articles ORDER BY d DESC LIMIT 30
+      `)
       .all() as { d: string }[]
   ).map((r) => r.d)
 }
@@ -117,12 +117,12 @@ export function getUnnotifiedArticles(): Article[] {
   return (
     db
       .prepare(`
-    SELECT * FROM articles
-    WHERE date(collected_at) = ? AND is_notified = 0
-    ORDER BY
-      CASE category WHEN 'security' THEN 0 ELSE 1 END,
-      published_at DESC
-  `)
+        SELECT * FROM articles
+        WHERE date(collected_at) = ? AND is_notified = 0
+        ORDER BY
+          CASE category WHEN 'security' THEN 0 ELSE 1 END,
+          published_at DESC
+      `)
       .all(today) as ArticleRow[]
   ).map(rowToArticle)
 }
