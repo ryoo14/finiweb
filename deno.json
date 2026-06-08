@@ -1,0 +1,18 @@
+{
+  "tasks": {
+    "dev": "deno run --watch --env-file=.env --allow-net=0.0.0.0,zenn.dev,qiita.com,hacker-news.firebaseio.com,github.com,services.nvd.nist.gov,b.hatena.ne.jp,gihyo.jp,www.publickey1.jp,www.theregister.com,api.theregister.com,feeds.arstechnica.com,www.bleepingcomputer.com,www.darkreading.com,rss.itmedia.co.jp,feeds.japan.zdnet.com,discord.com --allow-read --allow-write --allow-env --allow-ffi src/index.ts",
+    "start": "deno run --env-file=.env --allow-net=0.0.0.0,zenn.dev,qiita.com,hacker-news.firebaseio.com,github.com,services.nvd.nist.gov,b.hatena.ne.jp,gihyo.jp,www.publickey1.jp,www.theregister.com,api.theregister.com,feeds.arstechnica.com,www.bleepingcomputer.com,www.darkreading.com,rss.itmedia.co.jp,feeds.japan.zdnet.com,discord.com --allow-read --allow-write --allow-env --allow-ffi src/index.ts",
+    "collect": "deno run --env-file=.env --allow-net=zenn.dev,qiita.com,hacker-news.firebaseio.com,github.com,services.nvd.nist.gov,b.hatena.ne.jp,gihyo.jp,www.publickey1.jp,www.theregister.com,api.theregister.com,feeds.arstechnica.com,www.bleepingcomputer.com,www.darkreading.com,rss.itmedia.co.jp,feeds.japan.zdnet.com --allow-read --allow-write --allow-env --allow-ffi src/collect.ts"
+  },
+  "imports": {
+    "hono": "npm:hono",
+    "hono/jsx": "npm:hono/jsx",
+    "node-cron": "npm:node-cron",
+    "rss-parser": "npm:rss-parser",
+    "cheerio": "npm:cheerio"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx"
+  }
+}

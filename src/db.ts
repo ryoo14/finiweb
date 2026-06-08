@@ -1,18 +1,15 @@
-import { mkdirSync } from "node:fs"
-import { dirname, join } from "node:path"
-import { DatabaseSync } from "node:sqlite"
-import { fileURLToPath } from "node:url"
-import type { Article, Category } from "./types.js"
+import { Database } from "jsr:@db/sqlite"
+import { dirname, join } from "jsr:@std/path"
+import type { Article, Category } from "./types.ts"
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const DB_PATH = process.env.DB_PATH ?? join(__dirname, "..", "data", "finiweb.db")
+const DB_PATH = Deno.env.get("DB_PATH") ?? join(import.meta.dirname!, "..", "data", "finiweb.db")
 
-let _db: DatabaseSync | null = null
+let _db: Database | null = null
 
-function getDb(): DatabaseSync {
+function getDb(): Database {
   if (!_db) {
-    mkdirSync(dirname(DB_PATH), { recursive: true })
-    _db = new DatabaseSync(DB_PATH)
+    Deno.mkdirSync(dirname(DB_PATH), { recursive: true })
+    _db = new Database(DB_PATH)
     _db.exec(`
       PRAGMA journal_mode = WAL;
       CREATE TABLE IF NOT EXISTS articles (
@@ -63,17 +60,17 @@ export function saveArticle(article: Omit<Article, "isNotified">): void {
     INSERT OR IGNORE INTO articles
       (id, title, url, source, category, published_at, collected_at, cvss_score)
     VALUES
-      (@id, @title, @url, @source, @category, @publishedAt, @collectedAt, @cvssScore)
-  `).run({
-    id: article.id,
-    title: article.title,
-    url: article.url,
-    source: article.source,
-    category: article.category,
-    publishedAt: article.publishedAt,
-    collectedAt: article.collectedAt,
-    cvssScore: article.cvssScore ?? null,
-  })
+      (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    article.id,
+    article.title,
+    article.url,
+    article.source,
+    article.category,
+    article.publishedAt,
+    article.collectedAt,
+    article.cvssScore ?? null,
+  )
 }
 
 export function getArticlesByDate(date: string, category?: Category): Article[] {

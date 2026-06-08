@@ -1,8 +1,8 @@
-import { createHash } from "node:crypto"
 import Parser from "rss-parser"
-import { saveArticle } from "../db.js"
-import * as logger from "../logger.js"
-import type { SourceConfig } from "../types.js"
+import { saveArticle } from "../db.ts"
+import { hashId } from "../hash.ts"
+import * as logger from "../logger.ts"
+import type { SourceConfig } from "../types.ts"
 
 const parser = new Parser({ timeout: 10000 })
 
@@ -18,7 +18,7 @@ export async function collectRss(source: SourceConfig): Promise<number> {
     for (const item of items) {
       if (!item.title || !item.link) continue
 
-      const id = createHash("sha256").update(item.link).digest("hex").slice(0, 16)
+      const id = await hashId(item.link)
       const publishedAt = item.pubDate
         ? new Date(item.pubDate).toISOString()
         : new Date().toISOString()

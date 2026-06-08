@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto"
-import { saveArticle } from "../db.js"
-import * as logger from "../logger.js"
+import { saveArticle } from "../db.ts"
+import { hashId } from "../hash.ts"
+import * as logger from "../logger.ts"
 
 const MIN_STOCKS = 50
 const LIMIT = 5
@@ -22,7 +22,8 @@ export async function collectQiita(): Promise<number> {
     })
 
     const headers: Record<string, string> = { "User-Agent": "finiweb/1.0" }
-    if (process.env.QIITA_TOKEN) headers.Authorization = `Bearer ${process.env.QIITA_TOKEN}`
+    const token = Deno.env.get("QIITA_TOKEN")
+    if (token) headers.Authorization = `Bearer ${token}`
 
     const res = await fetch(`https://qiita.com/api/v2/items?${params}`, { headers })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -31,7 +32,7 @@ export async function collectQiita(): Promise<number> {
     let count = 0
 
     for (const item of items) {
-      const id = createHash("sha256").update(item.url).digest("hex").slice(0, 16)
+      const id = await hashId(item.url)
       saveArticle({
         id,
         title: item.title,

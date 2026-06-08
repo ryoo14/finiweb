@@ -1,5 +1,5 @@
 /** @jsxImportSource hono/jsx */
-import type { Article, Category } from "../types.js"
+import type { Article, Category } from "../types.ts"
 
 const CATEGORIES: { id: Category; label: string; emoji: string; color: string }[] = [
   { id: "security", label: "Security", emoji: "🔴", color: "#e85555" },

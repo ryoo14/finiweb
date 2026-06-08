@@ -1,11 +1,11 @@
-import * as logger from "../logger.js"
-import type { SourceConfig } from "../types.js"
-import { collectCVE } from "./cve.js"
-import { collectGithubTrending } from "./github-trending.js"
-import { collectHN } from "./hn.js"
-import { collectQiita } from "./qiita.js"
-import { collectRss } from "./rss.js"
-import { collectZenn } from "./zenn.js"
+import * as logger from "../logger.ts"
+import type { SourceConfig } from "../types.ts"
+import { collectCVE } from "./cve.ts"
+import { collectGithubTrending } from "./github-trending.ts"
+import { collectHN } from "./hn.ts"
+import { collectQiita } from "./qiita.ts"
+import { collectRss } from "./rss.ts"
+import { collectZenn } from "./zenn.ts"
 
 const RSS_SOURCES: SourceConfig[] = [
   {

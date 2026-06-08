@@ -1,12 +1,9 @@
-import { serve } from "@hono/node-server"
-import { app } from "./api.js"
-import * as logger from "./logger.js"
-import { startScheduler } from "./scheduler.js"
+import { app } from "./api.ts"
+import * as logger from "./logger.ts"
+import { startScheduler } from "./scheduler.ts"
 
-const port = parseInt(process.env.PORT ?? "3000", 10)
+const port = parseInt(Deno.env.get("PORT") ?? "3000", 10)
 
-serve({ fetch: app.fetch, port }, () => {
-  logger.log(`[finiweb] http://localhost:${port}`)
-})
+Deno.serve(app.fetch, { port, onListen: () => logger.log(`[finiweb] http://localhost:${port}`) })
 
 startScheduler()

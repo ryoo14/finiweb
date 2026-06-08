@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto"
-import { saveArticle } from "../db.js"
-import * as logger from "../logger.js"
+import { saveArticle } from "../db.ts"
+import { hashId } from "../hash.ts"
+import * as logger from "../logger.ts"
 
 const LIMIT = 5
 const MIN_SCORE = 100
@@ -29,7 +29,7 @@ export async function collectHN(): Promise<number> {
       if (!item || item.type !== "story" || !item.url || !item.title) continue
       if (item.score < MIN_SCORE) continue
 
-      const id = createHash("sha256").update(item.url).digest("hex").slice(0, 16)
+      const id = await hashId(item.url)
       saveArticle({
         id,
         title: item.title,

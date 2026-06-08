@@ -1,9 +1,9 @@
 import { Hono } from "hono"
-import { runCollector } from "./collector/index.js"
-import { getArticlesByDate, getAvailableDates } from "./db.js"
-import { sendDailyDigest } from "./notifier/discord.js"
-import type { Category } from "./types.js"
-import { Dashboard } from "./views/dashboard.js"
+import { runCollector } from "./collector/index.ts"
+import { getArticlesByDate, getAvailableDates } from "./db.ts"
+import { sendDailyDigest } from "./notifier/discord.ts"
+import type { Category } from "./types.ts"
+import { Dashboard } from "./views/dashboard.tsx"
 
 export const app = new Hono()
 

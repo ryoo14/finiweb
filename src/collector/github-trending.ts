@@ -1,7 +1,7 @@
-import { createHash } from "node:crypto"
 import * as cheerio from "cheerio"
-import { saveArticle } from "../db.js"
-import * as logger from "../logger.js"
+import { saveArticle } from "../db.ts"
+import { hashId } from "../hash.ts"
+import * as logger from "../logger.ts"
 
 export async function collectGithubTrending(): Promise<number> {
   try {
@@ -13,6 +13,8 @@ export async function collectGithubTrending(): Promise<number> {
 
     const LIMIT = 5
     let count = 0
+    const promises: Promise<void>[] = []
+
     $("article.Box-row").each((_, el) => {
       if (count >= LIMIT) return false
       const href = $(el).find("h2 a").attr("href")
@@ -23,19 +25,23 @@ export async function collectGithubTrending(): Promise<number> {
       const desc = $(el).find("p").text().trim()
       const title = desc ? `${repoName} — ${desc}` : repoName
 
-      const id = createHash("sha256").update(url).digest("hex").slice(0, 16)
-      saveArticle({
-        id,
-        title,
-        url,
-        source: "github-trending",
-        category: "oss",
-        publishedAt: new Date().toISOString(),
-        collectedAt: new Date().toISOString(),
-      })
+      promises.push(
+        hashId(url).then((id) => {
+          saveArticle({
+            id,
+            title,
+            url,
+            source: "github-trending",
+            category: "oss",
+            publishedAt: new Date().toISOString(),
+            collectedAt: new Date().toISOString(),
+          })
+        }),
+      )
       count++
     })
 
+    await Promise.all(promises)
     return count
   } catch (err) {
     logger.error("[github-trending] Failed:", (err as Error).message)

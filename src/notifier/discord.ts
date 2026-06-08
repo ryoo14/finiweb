@@ -1,11 +1,11 @@
-import { getUnnotifiedArticles, markNotified } from "../db.js"
-import * as logger from "../logger.js"
-import type { Article } from "../types.js"
+import { getUnnotifiedArticles, markNotified } from "../db.ts"
+import * as logger from "../logger.ts"
+import type { Article } from "../types.ts"
 
 const MAX_ARTICLES = 15
 
 export async function sendDailyDigest(): Promise<void> {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL
+  const webhookUrl = Deno.env.get("DISCORD_WEBHOOK_URL")
   if (!webhookUrl) {
     logger.warn("[discord] DISCORD_WEBHOOK_URL not set, skipping")
     return

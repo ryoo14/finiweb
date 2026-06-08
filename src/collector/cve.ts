@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto"
-import { saveArticle } from "../db.js"
-import * as logger from "../logger.js"
+import { saveArticle } from "../db.ts"
+import { hashId } from "../hash.ts"
+import * as logger from "../logger.ts"
 
 const NVD_API = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 const CVSS_THRESHOLD = 7.0
@@ -35,7 +35,8 @@ export async function collectCVE(): Promise<number> {
 
     const params = new URLSearchParams({ pubStartDate, pubEndDate })
     const headers: Record<string, string> = { "User-Agent": "finiweb/1.0" }
-    if (process.env.NVD_API_KEY) headers.apiKey = process.env.NVD_API_KEY
+    const apiKey = Deno.env.get("NVD_API_KEY")
+    if (apiKey) headers.apiKey = apiKey
 
     const res = await fetch(`${NVD_API}?${params}`, { headers })
     const data = (await res.json()) as { vulnerabilities?: { cve: NvdCve }[] }
@@ -51,7 +52,7 @@ export async function collectCVE(): Promise<number> {
 
       const description = cve.descriptions.find((d) => d.lang === "en")?.value ?? cve.id
       const url = `https://nvd.nist.gov/vuln/detail/${cve.id}`
-      const id = createHash("sha256").update(url).digest("hex").slice(0, 16)
+      const id = await hashId(url)
 
       saveArticle({
         id,

@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto"
-import { saveArticle } from "../db.js"
-import * as logger from "../logger.js"
+import { saveArticle } from "../db.ts"
+import { hashId } from "../hash.ts"
+import * as logger from "../logger.ts"
 
 const LIMIT = 5
 
@@ -29,7 +29,7 @@ export async function collectZenn(): Promise<number> {
 
     for (const article of data.articles.slice(0, LIMIT)) {
       const url = `https://zenn.dev/${article.user.username}/articles/${article.slug}`
-      const id = createHash("sha256").update(url).digest("hex").slice(0, 16)
+      const id = await hashId(url)
 
       saveArticle({
         id,
