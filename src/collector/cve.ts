@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto"
 import { saveArticle } from "../db.js"
+import * as logger from "../logger.js"
 
 const NVD_API = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 const CVSS_THRESHOLD = 7.0
@@ -67,7 +68,7 @@ export async function collectCVE(): Promise<number> {
 
     return count
   } catch (err) {
-    console.error("[nvd] Failed:", (err as Error).message)
+    logger.error("[nvd] Failed:", (err as Error).message)
     return 0
   }
 }

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto"
 import { saveArticle } from "../db.js"
+import * as logger from "../logger.js"
 
 const LIMIT = 5
 
@@ -44,7 +45,7 @@ export async function collectZenn(): Promise<number> {
 
     return count
   } catch (err) {
-    console.error("[zenn] Failed:", (err as Error).message)
+    logger.error("[zenn] Failed:", (err as Error).message)
     return 0
   }
 }

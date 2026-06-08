@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto"
 import * as cheerio from "cheerio"
 import { saveArticle } from "../db.js"
+import * as logger from "../logger.js"
 
 export async function collectGithubTrending(): Promise<number> {
   try {
@@ -37,7 +38,7 @@ export async function collectGithubTrending(): Promise<number> {
 
     return count
   } catch (err) {
-    console.error("[github-trending] Failed:", (err as Error).message)
+    logger.error("[github-trending] Failed:", (err as Error).message)
     return 0
   }
 }

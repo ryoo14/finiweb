@@ -1,3 +1,4 @@
+import * as logger from "../logger.js"
 import type { SourceConfig } from "../types.js"
 import { collectCVE } from "./cve.js"
 import { collectGithubTrending } from "./github-trending.js"
@@ -16,11 +17,11 @@ const RSS_SOURCES: SourceConfig[] = [
     limit: 5,
   },
   {
-    id: "techcrunch-jp",
-    name: "TechCrunch Japan",
-    category: "news",
+    id: "gihyo",
+    name: "gihyo.jp",
+    category: "dev",
     type: "rss",
-    url: "https://jp.techcrunch.com/feed/",
+    url: "https://gihyo.jp/feed/rss2",
     limit: 5,
   },
   {
@@ -82,37 +83,31 @@ const RSS_SOURCES: SourceConfig[] = [
 ]
 
 export async function runCollector(): Promise<Record<string, number>> {
-  console.log("[collector] Starting...")
+  logger.log("[collector] Starting...")
   const results: Record<string, number> = {}
 
   for (const source of RSS_SOURCES) {
-    process.stdout.write(`  ${source.name}...`)
     const n = await collectRss(source)
-    console.log(` ${n}`)
+    logger.log(`  ${source.name}: ${n}`)
     results[source.id] = n
   }
 
-  process.stdout.write("  Zenn (trending)...")
   results.zenn = await collectZenn()
-  console.log(` ${results.zenn}`)
+  logger.log(`  Zenn (trending): ${results.zenn}`)
 
-  process.stdout.write("  Qiita (trending)...")
   results.qiita = await collectQiita()
-  console.log(` ${results.qiita}`)
+  logger.log(`  Qiita (trending): ${results.qiita}`)
 
-  process.stdout.write("  Hacker News...")
   results.hn = await collectHN()
-  console.log(` ${results.hn}`)
+  logger.log(`  Hacker News: ${results.hn}`)
 
-  process.stdout.write("  GitHub Trending...")
   results["github-trending"] = await collectGithubTrending()
-  console.log(` ${results["github-trending"]}`)
+  logger.log(`  GitHub Trending: ${results["github-trending"]}`)
 
-  process.stdout.write("  CVE (NVD)...")
   results.nvd = await collectCVE()
-  console.log(` ${results.nvd}`)
+  logger.log(`  CVE (NVD): ${results.nvd}`)
 
   const total = Object.values(results).reduce((a, b) => a + b, 0)
-  console.log(`[collector] Done. Total: ${total} articles`)
+  logger.log(`[collector] Done. Total: ${total} articles`)
   return results
 }

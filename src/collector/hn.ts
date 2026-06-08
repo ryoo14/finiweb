@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto"
 import { saveArticle } from "../db.js"
+import * as logger from "../logger.js"
 
 const LIMIT = 5
 const MIN_SCORE = 100
@@ -43,7 +44,7 @@ export async function collectHN(): Promise<number> {
 
     return count
   } catch (err) {
-    console.error("[hn] Failed:", (err as Error).message)
+    logger.error("[hn] Failed:", (err as Error).message)
     return 0
   }
 }

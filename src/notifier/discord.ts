@@ -1,4 +1,5 @@
 import { getUnnotifiedArticles, markNotified } from "../db.js"
+import * as logger from "../logger.js"
 import type { Article } from "../types.js"
 
 const MAX_ARTICLES = 15
@@ -6,13 +7,13 @@ const MAX_ARTICLES = 15
 export async function sendDailyDigest(): Promise<void> {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL
   if (!webhookUrl) {
-    console.warn("[discord] DISCORD_WEBHOOK_URL not set, skipping")
+    logger.warn("[discord] DISCORD_WEBHOOK_URL not set, skipping")
     return
   }
 
   const articles = getUnnotifiedArticles().slice(0, MAX_ARTICLES)
   if (articles.length === 0) {
-    console.log("[discord] No new articles")
+    logger.log("[discord] No new articles")
     return
   }
 
@@ -53,5 +54,5 @@ export async function sendDailyDigest(): Promise<void> {
   if (!res.ok) throw new Error(`Discord error: ${res.status}`)
 
   markNotified(articles.map((a) => a.id))
-  console.log(`[discord] Sent ${articles.length} articles`)
+  logger.log(`[discord] Sent ${articles.length} articles`)
 }

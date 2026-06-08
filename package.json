@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file .env src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "collect": "tsx src/collect.ts",
+    "start": "node --env-file .env dist/index.js",
+    "collect": "tsx --env-file .env src/collect.ts",
     "format": "biome format --write src",
     "lint": "biome lint --write src",
     "check": "biome check --write src"

@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto"
 import Parser from "rss-parser"
 import { saveArticle } from "../db.js"
+import * as logger from "../logger.js"
 import type { SourceConfig } from "../types.js"
 
 const parser = new Parser({ timeout: 10000 })
@@ -36,7 +37,7 @@ export async function collectRss(source: SourceConfig): Promise<number> {
 
     return count
   } catch (err) {
-    console.error(`[${source.id}] RSS failed:`, (err as Error).message)
+    logger.error(`[${source.id}] RSS failed:`, (err as Error).message)
     return 0
   }
 }
