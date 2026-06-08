@@ -1,18 +1,23 @@
 /** @jsxImportSource hono/jsx */
-import type { Article, Category } from "../types.ts"
+import type { Article, Category } from "../types.ts";
 
-const CATEGORIES: { id: Category; label: string; emoji: string; color: string }[] = [
+const CATEGORIES: {
+  id: Category;
+  label: string;
+  emoji: string;
+  color: string;
+}[] = [
   { id: "security", label: "Security", emoji: "🔴", color: "#e85555" },
   { id: "cloud", label: "Cloud", emoji: "☁️", color: "#4488ff" },
   { id: "oss", label: "OSS", emoji: "📦", color: "#44aa55" },
   { id: "infra", label: "Infra", emoji: "🔧", color: "#ff8844" },
   { id: "dev", label: "Dev", emoji: "💻", color: "#9955ff" },
   { id: "news", label: "News", emoji: "📰", color: "#888888" },
-]
+];
 
 const COLOR: Record<Category, string> = Object.fromEntries(
   CATEGORIES.map((c) => [c.id, c.color]),
-) as Record<Category, string>
+) as Record<Category, string>;
 
 const CSS = `
 *{box-sizing:border-box;margin:0;padding:0}
@@ -38,26 +43,32 @@ a{color:inherit;text-decoration:none}
 .badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;color:#fff}
 .cvss{background:#c0392b;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;color:#fff}
 .empty{text-align:center;color:#444;padding:60px;font-size:14px}
-`
+`;
 
 type Props = {
-  articles: Article[]
-  selectedDate: string
-  selectedCategory?: Category
-  dates: string[]
-}
+  articles: Article[];
+  selectedDate: string;
+  selectedCategory?: Category;
+  dates: string[];
+};
 
 function fmtDate(iso: string) {
-  return iso.replace(/-/g, "/")
+  return iso.replace(/-/g, "/");
 }
 
 function fmtTime(iso: string) {
-  const d = new Date(iso)
-  return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`
+  const d = new Date(iso);
+  return `${d.getMonth() + 1}/${d.getDate()} ${
+    String(d.getHours()).padStart(2, "0")
+  }:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-export function Dashboard({ articles, selectedDate, selectedCategory, dates }: Props) {
-  const allDates = dates.includes(selectedDate) ? dates : [selectedDate, ...dates]
+export function Dashboard(
+  { articles, selectedDate, selectedCategory, dates }: Props,
+) {
+  const allDates = dates.includes(selectedDate)
+    ? dates
+    : [selectedDate, ...dates];
 
   return (
     <html lang="ja">
@@ -76,7 +87,9 @@ export function Dashboard({ articles, selectedDate, selectedCategory, dates }: P
           <div class="ctrl">
             <select
               class="date-sel"
-              onchange={`location.href='/date/'+this.value${selectedCategory ? `+'?category=${selectedCategory}'` : ""}`}
+              onchange={`location.href='/date/'+this.value${
+                selectedCategory ? `+'?category=${selectedCategory}'` : ""
+              }`}
             >
               {allDates.map((d) => (
                 <option value={d} selected={d === selectedDate}>
@@ -85,18 +98,19 @@ export function Dashboard({ articles, selectedDate, selectedCategory, dates }: P
               ))}
             </select>
             <div class="tabs">
-              <a href={`/date/${selectedDate}`} class={`tab${!selectedCategory ? " on" : ""}`}>
+              <a
+                href={`/date/${selectedDate}`}
+                class={`tab${!selectedCategory ? " on" : ""}`}
+              >
                 すべて
               </a>
               {CATEGORIES.map((cat) => (
                 <a
                   href={`/date/${selectedDate}?category=${cat.id}`}
                   class={`tab${selectedCategory === cat.id ? " on" : ""}`}
-                  style={
-                    selectedCategory === cat.id
-                      ? `border-color:${cat.color};color:${cat.color}`
-                      : ""
-                  }
+                  style={selectedCategory === cat.id
+                    ? `border-color:${cat.color};color:${cat.color}`
+                    : ""}
                 >
                   {cat.emoji} {cat.label}
                 </a>
@@ -106,28 +120,38 @@ export function Dashboard({ articles, selectedDate, selectedCategory, dates }: P
           </div>
 
           <div class="list">
-            {articles.length === 0 ? (
-              <div class="empty">この日の記事はまだありません</div>
-            ) : (
-              articles.map((a) => (
-                <div class="item">
-                  <a href={a.url} target="_blank" rel="noopener noreferrer" class="item-title">
-                    {a.title}
-                  </a>
-                  <div class="item-meta">
-                    <span class="badge" style={`background:${COLOR[a.category]}`}>
-                      {a.category}
-                    </span>
-                    <span>{a.source}</span>
-                    {a.cvssScore !== undefined && <span class="cvss">CVSS {a.cvssScore}</span>}
-                    <span>{fmtTime(a.publishedAt)}</span>
+            {articles.length === 0
+              ? <div class="empty">この日の記事はまだありません</div>
+              : (
+                articles.map((a) => (
+                  <div class="item">
+                    <a
+                      href={a.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="item-title"
+                    >
+                      {a.title}
+                    </a>
+                    <div class="item-meta">
+                      <span
+                        class="badge"
+                        style={`background:${COLOR[a.category]}`}
+                      >
+                        {a.category}
+                      </span>
+                      <span>{a.source}</span>
+                      {a.cvssScore !== undefined && (
+                        <span class="cvss">CVSS {a.cvssScore}</span>
+                      )}
+                      <span>{fmtTime(a.publishedAt)}</span>
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
           </div>
         </div>
       </body>
     </html>
-  )
+  );
 }

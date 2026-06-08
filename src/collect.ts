@@ -1,3 +1,3 @@
-import { runCollector } from "./collector/index.ts"
+import { runCollector } from "./collector/index.ts";
 
-runCollector().then(() => Deno.exit(0))
+runCollector().then(() => Deno.exit(0));

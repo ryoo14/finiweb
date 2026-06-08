@@ -1,5 +1,5 @@
-import { Database } from "jsr:@db/sqlite"
-import { dirname, join } from "jsr:@std/path"
+import { Database } from "@db/sqlite"
+import { dirname, join } from "@std/path"
 import type { Article, Category } from "./types.ts"
 
 const DB_PATH = Deno.env.get("DB_PATH") ?? join(import.meta.dirname!, "..", "data", "finiweb.db")

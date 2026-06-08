@@ -1,11 +1,11 @@
-import * as logger from "../logger.ts"
-import type { SourceConfig } from "../types.ts"
-import { collectCVE } from "./cve.ts"
-import { collectGithubTrending } from "./github-trending.ts"
-import { collectHN } from "./hn.ts"
-import { collectQiita } from "./qiita.ts"
-import { collectRss } from "./rss.ts"
-import { collectZenn } from "./zenn.ts"
+import * as logger from "../logger.ts";
+import type { SourceConfig } from "../types.ts";
+import { collectCVE } from "./cve.ts";
+import { collectGithubTrending } from "./github-trending.ts";
+import { collectHN } from "./hn.ts";
+import { collectQiita } from "./qiita.ts";
+import { collectRss } from "./rss.ts";
+import { collectZenn } from "./zenn.ts";
 
 const RSS_SOURCES: SourceConfig[] = [
   {
@@ -80,34 +80,34 @@ const RSS_SOURCES: SourceConfig[] = [
     url: "https://feeds.japan.zdnet.com/rss/zdnet/all.rdf",
     limit: 5,
   },
-]
+];
 
 export async function runCollector(): Promise<Record<string, number>> {
-  logger.log("[collector] Starting...")
-  const results: Record<string, number> = {}
+  logger.log("[collector] Starting...");
+  const results: Record<string, number> = {};
 
   for (const source of RSS_SOURCES) {
-    const n = await collectRss(source)
-    logger.log(`  ${source.name}: ${n}`)
-    results[source.id] = n
+    const n = await collectRss(source);
+    logger.log(`  ${source.name}: ${n}`);
+    results[source.id] = n;
   }
 
-  results.zenn = await collectZenn()
-  logger.log(`  Zenn (trending): ${results.zenn}`)
+  results.zenn = await collectZenn();
+  logger.log(`  Zenn (trending): ${results.zenn}`);
 
-  results.qiita = await collectQiita()
-  logger.log(`  Qiita (trending): ${results.qiita}`)
+  results.qiita = await collectQiita();
+  logger.log(`  Qiita (trending): ${results.qiita}`);
 
-  results.hn = await collectHN()
-  logger.log(`  Hacker News: ${results.hn}`)
+  results.hn = await collectHN();
+  logger.log(`  Hacker News: ${results.hn}`);
 
-  results["github-trending"] = await collectGithubTrending()
-  logger.log(`  GitHub Trending: ${results["github-trending"]}`)
+  results["github-trending"] = await collectGithubTrending();
+  logger.log(`  GitHub Trending: ${results["github-trending"]}`);
 
-  results.nvd = await collectCVE()
-  logger.log(`  CVE (NVD): ${results.nvd}`)
+  results.nvd = await collectCVE();
+  logger.log(`  CVE (NVD): ${results.nvd}`);
 
-  const total = Object.values(results).reduce((a, b) => a + b, 0)
-  logger.log(`[collector] Done. Total: ${total} articles`)
-  return results
+  const total = Object.values(results).reduce((a, b) => a + b, 0);
+  logger.log(`[collector] Done. Total: ${total} articles`);
+  return results;
 }
