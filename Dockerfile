@@ -1,28 +1,23 @@
-FROM node:22-alpine AS builder
+FROM denoland/deno:alpine
+
+RUN apk add --no-cache sqlite-libs
 
 WORKDIR /app
-RUN apk add --no-cache python3 make g++
 
-COPY package*.json ./
-RUN npm ci
-
-COPY tsconfig.json .
+COPY deno.json deno.lock ./
 COPY src ./src
-RUN npm run build
 
-FROM node:22-alpine
-
-WORKDIR /app
-RUN apk add --no-cache python3 make g++
-
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-COPY --from=builder /app/dist ./dist
+RUN deno cache src/index.ts
 
 RUN mkdir -p data
 
 EXPOSE 3000
 ENV TZ=Asia/Tokyo
 
-CMD ["node", "dist/index.js"]
+CMD ["deno", "run", \
+  "--allow-net=0.0.0.0,zenn.dev,qiita.com,hacker-news.firebaseio.com,github.com,services.nvd.nist.gov,b.hatena.ne.jp,gihyo.jp,www.publickey1.jp,www.theregister.com,api.theregister.com,feeds.arstechnica.com,www.bleepingcomputer.com,www.darkreading.com,rss.itmedia.co.jp,feeds.japan.zdnet.com,discord.com", \
+  "--allow-read", \
+  "--allow-write", \
+  "--allow-env", \
+  "--allow-ffi", \
+  "src/index.ts"]

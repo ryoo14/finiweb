@@ -16,6 +16,7 @@
     "jsr:@std/path@1.1.4": "1.1.4",
     "jsr:@std/path@^1.1.4": "1.1.4",
     "npm:cheerio@*": "1.2.0",
+    "npm:node-cron@*": "4.2.1",
     "npm:rss-parser@*": "3.13.0"
   },
   "jsr": {
@@ -172,6 +173,9 @@
       "dependencies": [
         "safer-buffer"
       ]
+    },
+    "node-cron@4.2.1": {
+      "integrity": "sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg=="
     },
     "nth-check@2.1.1": {
       "integrity": "sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==",

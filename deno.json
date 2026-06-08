@@ -13,7 +13,6 @@
     "rss-parser": "npm:rss-parser",
     "cheerio": "npm:cheerio"
   },
-  "unstable": ["cron"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
