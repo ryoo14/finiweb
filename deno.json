@@ -7,12 +7,13 @@
   "imports": {
     "@db/sqlite": "jsr:@db/sqlite@0.12.0",
     "@std/path": "jsr:@std/path@1.1.4",
-    "hono": "npm:hono",
-    "hono/jsx": "npm:hono/jsx",
-    "node-cron": "npm:node-cron",
+    "hono": "jsr:@hono/hono@^4",
+    "hono/jsx": "jsr:@hono/hono@^4/jsx",
+    "hono/jsx/jsx-runtime": "jsr:@hono/hono@^4/jsx/jsx-runtime",
     "rss-parser": "npm:rss-parser",
     "cheerio": "npm:cheerio"
   },
+  "unstable": ["cron"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"

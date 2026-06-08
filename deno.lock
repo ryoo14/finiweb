@@ -2,7 +2,9 @@
   "version": "5",
   "specifiers": {
     "jsr:@db/sqlite@*": "0.12.0",
+    "jsr:@db/sqlite@0.12.0": "0.12.0",
     "jsr:@denosaurs/plug@1": "1.1.0",
+    "jsr:@hono/hono@4": "4.12.12",
     "jsr:@std/assert@0.217": "0.217.0",
     "jsr:@std/encoding@1": "1.0.10",
     "jsr:@std/fmt@1": "1.0.10",
@@ -11,10 +13,9 @@
     "jsr:@std/path@*": "1.1.4",
     "jsr:@std/path@0.217": "0.217.0",
     "jsr:@std/path@1": "1.1.4",
+    "jsr:@std/path@1.1.4": "1.1.4",
     "jsr:@std/path@^1.1.4": "1.1.4",
     "npm:cheerio@*": "1.2.0",
-    "npm:hono@*": "4.12.23",
-    "npm:node-cron@*": "4.2.1",
     "npm:rss-parser@*": "3.13.0"
   },
   "jsr": {
@@ -33,6 +34,9 @@
         "jsr:@std/fs",
         "jsr:@std/path@1"
       ]
+    },
+    "@hono/hono@4.12.12": {
+      "integrity": "dc765178d38b5c4619b358062f6aa5514f7205bb0530b2823ff6265bec69c535"
     },
     "@std/assert@0.217.0": {
       "integrity": "c98e279362ca6982d5285c3b89517b757c1e3477ee9f14eb2fdf80a45aaa9642"
@@ -154,9 +158,6 @@
     "entities@7.0.1": {
       "integrity": "sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA=="
     },
-    "hono@4.12.23": {
-      "integrity": "sha512-eIaZ9qDgu7XV0pxOCrg7/WhnQ6Ivm22UcxhXx/A3dcbqbbYgBEkc6e/J/s7j2tS96zoB0S9VBdLwQNCWwUo4LA=="
-    },
     "htmlparser2@10.1.0": {
       "integrity": "sha512-VTZkM9GWRAtEpveh7MSF6SjjrpNVNNVJfFup7xTY3UpFtm67foy9HDVXneLtFVt4pMz5kZtgNcvCniNFb1hlEQ==",
       "dependencies": [
@@ -171,9 +172,6 @@
       "dependencies": [
         "safer-buffer"
       ]
-    },
-    "node-cron@4.2.1": {
-      "integrity": "sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg=="
     },
     "nth-check@2.1.1": {
       "integrity": "sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==",
@@ -239,9 +237,10 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@db/sqlite@0.12.0",
+      "jsr:@hono/hono@4",
+      "jsr:@std/path@1.1.4",
       "npm:cheerio@*",
-      "npm:hono@*",
-      "npm:node-cron@*",
       "npm:rss-parser@*"
     ]
   }
