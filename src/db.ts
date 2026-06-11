@@ -2,6 +2,10 @@ import { DatabaseSync } from "node:sqlite";
 import { dirname, join } from "@std/path";
 import type { Article, Category } from "./types.ts";
 
+function jstToday(): string {
+	return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Tokyo" });
+}
+
 const DB_PATH =
 	Deno.env.get("DB_PATH") ??
 	join(import.meta.dirname!, "..", "data", "finiweb.db");
@@ -84,7 +88,7 @@ export function getArticlesByDate(
 		? (db
 				.prepare(`
           SELECT * FROM articles
-          WHERE date(collected_at) = ? AND category = ?
+          WHERE date(collected_at, '+9 hours') = ? AND category = ?
           ORDER BY
             CASE category WHEN 'security' THEN 0 ELSE 1 END,
             published_at DESC
@@ -93,7 +97,7 @@ export function getArticlesByDate(
 		: (db
 				.prepare(`
           SELECT * FROM articles
-          WHERE date(collected_at) = ?
+          WHERE date(collected_at, '+9 hours') = ?
           ORDER BY
             CASE category WHEN 'security' THEN 0 ELSE 1 END,
             published_at DESC
@@ -107,7 +111,7 @@ export function getAvailableDates(): string[] {
 	return (
 		db
 			.prepare(`
-        SELECT DISTINCT date(collected_at) AS d FROM articles ORDER BY d DESC LIMIT 30
+        SELECT DISTINCT date(collected_at, '+9 hours') AS d FROM articles ORDER BY d DESC LIMIT 30
       `)
 			.all() as { d: string }[]
 	).map((r) => r.d);
@@ -115,12 +119,12 @@ export function getAvailableDates(): string[] {
 
 export function getUnnotifiedArticles(): Article[] {
 	const db = getDb();
-	const today = new Date().toISOString().slice(0, 10);
+	const today = jstToday();
 	return (
 		db
 			.prepare(`
         SELECT * FROM articles
-        WHERE date(collected_at) = ? AND is_notified = 0
+        WHERE date(collected_at, '+9 hours') = ? AND is_notified = 0
         ORDER BY
           CASE category WHEN 'security' THEN 0 ELSE 1 END,
           published_at DESC
