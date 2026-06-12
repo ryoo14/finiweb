@@ -34,7 +34,8 @@ const CSS = `
 html { background: var(--ink) }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', 'IBM Plex Sans JP', -apple-system, BlinkMacSystemFont,
+               'Hiragino Sans', 'Noto Sans JP', sans-serif;
   background: var(--bg);
   color: var(--ink);
   min-height: 100vh;
@@ -347,6 +348,16 @@ export function Dashboard({
 				<meta name="viewport" content="width=device-width,initial-scale=1" />
 				<meta name="theme-color" content="#292F36" />
 				<title>finiweb</title>
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link
+					rel="preconnect"
+					href="https://fonts.gstatic.com"
+					crossorigin=""
+				/>
+				<link
+					rel="stylesheet"
+					href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=IBM+Plex+Sans+JP:wght@400;500;600;700&display=swap"
+				/>
 				<style dangerouslySetInnerHTML={{ __html: CSS }} />
 			</head>
 			<body>
