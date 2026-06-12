@@ -1,62 +1,13 @@
 /** @jsxImportSource hono/jsx */
 import type { Article, Category } from "../types.ts";
 
-const CATEGORIES: {
-	id: Category;
-	label: string;
-	emoji: string;
-	bg: string;
-	fg: string;
-	accent: string;
-}[] = [
-	{
-		id: "security",
-		label: "Security",
-		emoji: "🔴",
-		bg: "#C9551F",
-		fg: "#FFFCF9",
-		accent: "#C9551F",
-	},
-	{
-		id: "cloud",
-		label: "Cloud",
-		emoji: "☁️",
-		bg: "#3AAFB9",
-		fg: "#292F36",
-		accent: "#3AAFB9",
-	},
-	{
-		id: "oss",
-		label: "OSS",
-		emoji: "📦",
-		bg: "#2E8C95",
-		fg: "#FFFCF9",
-		accent: "#2E8C95",
-	},
-	{
-		id: "infra",
-		label: "Infra",
-		emoji: "🔧",
-		bg: "#FD8850",
-		fg: "#292F36",
-		accent: "#FD8850",
-	},
-	{
-		id: "dev",
-		label: "Dev",
-		emoji: "💻",
-		bg: "#292F36",
-		fg: "#FFFCF9",
-		accent: "#292F36",
-	},
-	{
-		id: "news",
-		label: "News",
-		emoji: "📰",
-		bg: "#8A8782",
-		fg: "#292F36",
-		accent: "#8A8782",
-	},
+const CATEGORIES: { id: Category; label: string; accent: string }[] = [
+	{ id: "security", label: "Security", accent: "#C9551F" },
+	{ id: "cloud", label: "Cloud", accent: "#3AAFB9" },
+	{ id: "oss", label: "OSS", accent: "#2E8C95" },
+	{ id: "infra", label: "Infra", accent: "#FD8850" },
+	{ id: "dev", label: "Dev", accent: "#292F36" },
+	{ id: "news", label: "News", accent: "#8A8782" },
 ];
 
 const CAT = Object.fromEntries(CATEGORIES.map((c) => [c.id, c])) as Record<
@@ -74,6 +25,7 @@ const CSS = `
   --mid:         #8A8782;
   --card:        #F7F3EE;
   --bg:          #FFFCF9;
+  --line:        #E9E2D8;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
@@ -92,15 +44,26 @@ body {
 
 a { color: inherit; text-decoration: none }
 
+::selection { background: var(--teal); color: var(--ink) }
+
+:focus-visible {
+  outline: 2px solid var(--teal-deep);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 /* ── Header ── */
 .hdr {
   background: var(--ink);
-  border-bottom: 3px solid var(--orange);
-  padding: 0 32px;
-  height: 58px;
+  padding: 0 28px;
+  height: 60px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
+}
+.hdr-rule {
+  height: 3px;
+  background: linear-gradient(90deg, var(--orange) 0%, var(--teal) 100%);
 }
 .hdr-brand {
   display: flex;
@@ -111,7 +74,8 @@ a { color: inherit; text-decoration: none }
   width: 32px;
   height: 32px;
   background: var(--orange);
-  border-radius: 8px;
+  color: var(--ink);
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,22 +98,31 @@ a { color: inherit; text-decoration: none }
   color: #B9BDC2;
   font-weight: 400;
 }
+@media (max-width: 640px) {
+  .hdr { padding: 0 18px }
+  .hdr-divider, .hdr-sub { display: none }
+}
 
 /* ── Layout ── */
 .wrap {
   max-width: 980px;
   margin: 0 auto;
-  padding: 0 24px 40px;
+  padding: 0 24px 48px;
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 14px 32px }
 }
 
-/* ── Sticky controls (デスクトップのみ) ── */
+/* ── Sticky controls ── */
 .ctrl-wrap {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--bg);
+  background: rgba(255, 252, 249, .88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 16px 0 14px;
-  border-bottom: 1px solid var(--card);
+  border-bottom: 1px solid var(--line);
   margin-bottom: 20px;
 }
 @media (max-width: 640px) {
@@ -166,12 +139,13 @@ a { color: inherit; text-decoration: none }
 .date-sel {
   appearance: none;
   background: var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A8782'/%3E%3C/svg%3E") no-repeat right 10px center;
-  border: 1.5px solid transparent;
+  border: 1.5px solid var(--line);
   color: var(--ink);
   padding: 7px 30px 7px 12px;
-  border-radius: 8px;
+  border-radius: 9px;
   font-size: 13px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
   cursor: pointer;
   outline: none;
   transition: border-color .15s;
@@ -184,10 +158,10 @@ a { color: inherit; text-decoration: none }
 .tab {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 7px;
   padding: 6px 14px;
-  border-radius: 20px;
-  border: 1.5px solid transparent;
+  border-radius: 999px;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--mid);
   font-size: 12px;
@@ -199,47 +173,68 @@ a { color: inherit; text-decoration: none }
 .tab:hover {
   color: var(--ink);
   background: var(--card);
-  border-color: var(--card);
+  border-color: var(--line);
 }
+/* アクティブタブ: Ink背景 + Base文字 13.4:1 (DESIGN.md コントラスト表) */
 .tab.on {
   color: var(--bg);
-  background: var(--orange-deep);
-  border-color: var(--orange-deep);
+  background: var(--ink);
+  border-color: var(--ink);
 }
+
+/* Category dot */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tab.on .dot { box-shadow: 0 0 0 1.5px rgba(255, 252, 249, .55) }
 
 /* Count */
 .cnt {
   margin-left: auto;
   font-size: 12px;
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
   color: var(--mid);
   background: var(--card);
-  padding: 4px 10px;
-  border-radius: 20px;
+  border: 1px solid var(--line);
+  padding: 4px 12px;
+  border-radius: 999px;
 }
 
 /* ── Article list ── */
-.list { display: flex; flex-direction: column; gap: 6px }
+.list { display: flex; flex-direction: column; gap: 8px }
 
 .item {
+  position: relative;
   background: var(--card);
-  padding: 14px 18px;
-  border-radius: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 18px 14px 21px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border-left: 4px solid transparent;
-  box-shadow: 0 1px 3px rgba(41,47,54,.06);
-  transition: box-shadow .15s, transform .1s;
+  overflow: hidden;
+  transition: box-shadow .18s, transform .12s, border-color .18s;
+}
+.item::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--accent, var(--mid));
 }
 .item:hover {
-  box-shadow: 0 4px 12px rgba(41,47,54,.1);
+  border-color: var(--accent, var(--mid));
+  box-shadow: 0 6px 16px rgba(41, 47, 54, .08);
   transform: translateY(-1px);
 }
 
 /* タイトルリンク: Teal Deep + 太字 (DESIGN.md rule 3) */
 .item-title {
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--teal-deep);
@@ -253,57 +248,67 @@ a { color: inherit; text-decoration: none }
 /* Meta row */
 .item-meta {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   font-size: 11px;
   color: var(--mid);
   flex-wrap: wrap;
 }
-.meta-sep { color: var(--card); filter: brightness(0.85) }
 
-/* Category badge */
-.badge {
-  padding: 2px 8px;
-  border-radius: 5px;
-  font-size: 10px;
+/* Category: カラードット + ラベル (ルール4: Mid Grayはラベル用途のみ可) */
+.cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
+  color: var(--ink);
 }
 
-/* CVSS badge */
+/* CVSS: Orange塗り + Ink文字 7.0:1 (DESIGN.md rule 1) */
 .cvss {
-  background: var(--orange-deep);
-  color: #fff;
+  background: var(--orange);
+  color: var(--ink);
   padding: 2px 8px;
   border-radius: 5px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.4px;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Source chip */
+/* Source chip: Card上の白カード (ルール5の重なり順) */
 .source {
-  background: var(--bg);
-  border: 1px solid #DDD8D2;
+  background: #fff;
+  border: 1px solid var(--line);
   color: var(--mid);
-  padding: 1px 7px;
-  border-radius: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
   font-size: 10px;
   font-weight: 500;
 }
 
 /* Time */
-.time { font-size: 11px; color: var(--mid) }
+.time {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--mid);
+  font-variant-numeric: tabular-nums;
+}
 
 /* Empty state */
 .empty {
   text-align: center;
   color: var(--mid);
-  padding: 80px 40px;
-  font-size: 15px;
+  background: var(--card);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 72px 40px;
+  font-size: 14px;
 }
-.empty-icon { font-size: 36px; display: block; margin-bottom: 12px; opacity: .5 }
+.empty-icon { font-size: 34px; display: block; margin-bottom: 12px; opacity: .55 }
 `;
 
 type Props = {
@@ -353,6 +358,7 @@ export function Dashboard({
 					<div class="hdr-divider" />
 					<span class="hdr-sub">インフラSE向け情報収集ダッシュボード</span>
 				</header>
+				<div class="hdr-rule" />
 
 				<div class="wrap">
 					<div class="ctrl-wrap">
@@ -381,13 +387,9 @@ export function Dashboard({
 									<a
 										href={`/date/${selectedDate}?category=${cat.id}`}
 										class={`tab${selectedCategory === cat.id ? " on" : ""}`}
-										style={
-											selectedCategory === cat.id
-												? `background:${cat.bg};border-color:${cat.bg};color:${cat.fg}`
-												: ""
-										}
 									>
-										{cat.emoji} {cat.label}
+										<span class="dot" style={`background:${cat.accent}`} />
+										{cat.label}
 									</a>
 								))}
 							</div>
@@ -404,10 +406,7 @@ export function Dashboard({
 							</div>
 						) : (
 							articles.map((a) => (
-								<div
-									class="item"
-									style={`border-left-color:${CAT[a.category].accent}`}
-								>
+								<div class="item" style={`--accent:${CAT[a.category].accent}`}>
 									<a
 										href={a.url}
 										target="_blank"
@@ -417,11 +416,12 @@ export function Dashboard({
 										{a.title}
 									</a>
 									<div class="item-meta">
-										<span
-											class="badge"
-											style={`background:${CAT[a.category].bg};color:${CAT[a.category].fg}`}
-										>
-											{a.category}
+										<span class="cat">
+											<span
+												class="dot"
+												style={`background:${CAT[a.category].accent}`}
+											/>
+											{CAT[a.category].label}
 										</span>
 										<span class="source">{a.source}</span>
 										{a.cvssScore !== undefined && (
