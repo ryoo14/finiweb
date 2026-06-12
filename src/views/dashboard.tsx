@@ -2,12 +2,12 @@
 import type { Article, Category } from "../types.ts";
 
 const CATEGORIES: { id: Category; label: string; accent: string }[] = [
-	{ id: "security", label: "Security", accent: "#C9551F" },
-	{ id: "cloud", label: "Cloud", accent: "#3AAFB9" },
-	{ id: "oss", label: "OSS", accent: "#2E8C95" },
-	{ id: "infra", label: "Infra", accent: "#FD8850" },
-	{ id: "dev", label: "Dev", accent: "#292F36" },
-	{ id: "news", label: "News", accent: "#8A8782" },
+	{ id: "security", label: "Security", accent: "#FD8850" },
+	{ id: "cloud", label: "Cloud", accent: "#C9551F" },
+	{ id: "oss", label: "OSS", accent: "#292F36" },
+	{ id: "infra", label: "Infra", accent: "#8A8782" },
+	{ id: "dev", label: "Dev", accent: "#3AAFB9" },
+	{ id: "news", label: "News", accent: "#2E8C95" },
 ];
 
 const CAT = Object.fromEntries(CATEGORIES.map((c) => [c.id, c])) as Record<
@@ -72,15 +72,7 @@ a { color: inherit; text-decoration: none }
   gap: 10px;
 }
 .hdr-icon {
-  width: 32px;
-  height: 32px;
-  background: var(--orange);
-  color: var(--ink);
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
+  font-size: 22px;
   flex-shrink: 0;
 }
 .hdr-title {
@@ -233,16 +225,45 @@ a { color: inherit; text-decoration: none }
   transform: translateY(-1px);
 }
 
+/* ── Desktop card grid (≥1200px) ── */
+@media (min-width: 1200px) {
+  .wrap { max-width: 1560px }
+
+  .list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .item {
+    padding: 0 0 16px;
+    gap: 12px;
+  }
+
+  /* 左ストライプ → 上ストライプ */
+  .item::before {
+    inset: 0 0 auto 0;
+    width: auto;
+    height: 3px;
+  }
+
+  .item-title {
+    font-size: 15px;
+    padding: 16px 18px 0;
+  }
+
+  .item-meta {
+    padding: 0 18px;
+  }
+
+  .time { margin-left: 0 }
+}
+
 /* タイトルリンク: Teal Deep + 太字 (DESIGN.md rule 3) */
 .item-title {
   font-size: 14.5px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--teal-deep);
-}
-.item-title:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
   color: var(--ink);
 }
 
@@ -367,7 +388,7 @@ export function Dashboard({
 						<span class="hdr-title">finiweb</span>
 					</div>
 					<div class="hdr-divider" />
-					<span class="hdr-sub">インフラSE向け情報収集ダッシュボード</span>
+					<span class="hdr-sub">エンジニア向け情報収集ダッシュボード</span>
 				</header>
 				<div class="hdr-rule" />
 
@@ -417,15 +438,14 @@ export function Dashboard({
 							</div>
 						) : (
 							articles.map((a) => (
-								<div class="item" style={`--accent:${CAT[a.category].accent}`}>
-									<a
-										href={a.url}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="item-title"
-									>
-										{a.title}
-									</a>
+								<a
+									href={a.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="item"
+									style={`--accent:${CAT[a.category].accent}`}
+								>
+									<span class="item-title">{a.title}</span>
 									<div class="item-meta">
 										<span class="cat">
 											<span
@@ -440,7 +460,7 @@ export function Dashboard({
 										)}
 										<span class="time">{fmtTime(a.publishedAt)}</span>
 									</div>
-								</div>
+								</a>
 							))
 						)}
 					</div>

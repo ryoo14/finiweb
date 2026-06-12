@@ -90,8 +90,15 @@ export function getArticlesByDate(
           SELECT * FROM articles
           WHERE date(collected_at, '+9 hours') = ? AND category = ?
           ORDER BY
-            CASE category WHEN 'security' THEN 0 ELSE 1 END,
-            published_at DESC
+            CASE category
+              WHEN 'security' THEN 0
+              WHEN 'cloud'    THEN 1
+              WHEN 'oss'      THEN 2
+              WHEN 'infra'    THEN 3
+              WHEN 'dev'      THEN 4
+              WHEN 'news'     THEN 5
+              ELSE 6
+            END
         `)
 				.all(date, category) as ArticleRow[])
 		: (db
@@ -99,8 +106,15 @@ export function getArticlesByDate(
           SELECT * FROM articles
           WHERE date(collected_at, '+9 hours') = ?
           ORDER BY
-            CASE category WHEN 'security' THEN 0 ELSE 1 END,
-            published_at DESC
+            CASE category
+              WHEN 'security' THEN 0
+              WHEN 'cloud'    THEN 1
+              WHEN 'oss'      THEN 2
+              WHEN 'infra'    THEN 3
+              WHEN 'dev'      THEN 4
+              WHEN 'news'     THEN 5
+              ELSE 6
+            END
         `)
 				.all(date) as ArticleRow[]);
 	return rows.map(rowToArticle);
