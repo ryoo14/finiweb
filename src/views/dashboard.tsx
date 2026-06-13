@@ -275,6 +275,7 @@ a { color: inherit; text-decoration: none }
   font-size: 11px;
   color: var(--mid);
   flex-wrap: wrap;
+  margin-top: auto;
 }
 
 /* Category: カラードット + ラベル (ルール4: Mid Grayはラベル用途のみ可) */
