@@ -128,23 +128,49 @@ a { color: inherit; text-decoration: none }
   align-items: center;
 }
 
-/* Date selector */
-.date-sel {
-  appearance: none;
-  background: var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A8782'/%3E%3C/svg%3E") no-repeat right 10px center;
-  border: 1.5px solid var(--line);
-  color: var(--ink);
-  padding: 7px 30px 7px 12px;
-  border-radius: 9px;
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  outline: none;
-  transition: border-color .15s;
+/* Date nav */
+.date-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.date-sel:hover { border-color: var(--mid) }
-.date-sel:focus { border-color: var(--teal-deep) }
+.date-nav-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  flex-shrink: 0;
+  user-select: none;
+}
+.date-nav-btn:hover { border-color: var(--mid); background: var(--line) }
+.date-nav-btn.off { opacity: .3; pointer-events: none }
+.date-nav-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 96px;
+  cursor: pointer;
+}
+.date-nav-label:hover .date-nav-date {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.date-nav-date {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
 
 /* Tabs */
 .tabs { display: flex; gap: 6px; flex-wrap: wrap }
@@ -332,6 +358,65 @@ a { color: inherit; text-decoration: none }
   font-size: 14px;
 }
 .empty-icon { font-size: 34px; display: block; margin-bottom: 12px; opacity: .55 }
+
+/* ── Calendar popover ── */
+.cal-wrap { position: relative }
+.cal {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(41,47,54,.13);
+  padding: 14px;
+  z-index: 200;
+  min-width: 234px;
+}
+.cal.open { display: block }
+.cal-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.cal-month { font-size: 13px; font-weight: 700; color: var(--ink) }
+.cal-nav {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .15s;
+}
+.cal-nav:hover { border-color: var(--mid) }
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal-dow {
+  font-size: 10px; font-weight: 600; color: var(--mid);
+  text-align: center; padding: 4px 0;
+}
+.cal-day {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; border-radius: 6px;
+  color: var(--line);
+}
+.cal-day.has {
+  color: var(--ink); font-weight: 600; cursor: pointer;
+  text-decoration: none;
+}
+.cal-day.has:hover { background: var(--card) }
+.cal-day.sel { background: var(--ink) !important; color: var(--bg) }
+.cal-day.today { outline: 1.5px solid var(--teal-deep); outline-offset: -1.5px }
 `;
 
 type Props = {
@@ -346,11 +431,8 @@ function fmtDate(iso: string) {
 }
 
 function fmtTime(iso: string) {
-	const d = new Date(iso);
-	return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(
-		2,
-		"0",
-	)}:${String(d.getMinutes()).padStart(2, "0")}`;
+	const d = new Date(new Date(iso).getTime() + 9 * 60 * 60 * 1000);
+	return `${d.getUTCMonth() + 1}/${d.getUTCDate()} ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
 }
 
 export function Dashboard({
@@ -362,6 +444,12 @@ export function Dashboard({
 	const allDates = dates.includes(selectedDate)
 		? dates
 		: [selectedDate, ...dates];
+
+	const sortedDates = [...allDates].sort((a, b) => b.localeCompare(a)); // desc
+	const idx = sortedDates.indexOf(selectedDate);
+	const prevDate = idx < sortedDates.length - 1 ? sortedDates[idx + 1] : null;
+	const nextDate = idx > 0 ? sortedDates[idx - 1] : null;
+	const catQuery = selectedCategory ? `?category=${selectedCategory}` : "";
 
 	return (
 		<html lang="ja">
@@ -396,18 +484,28 @@ export function Dashboard({
 				<div class="wrap">
 					<div class="ctrl-wrap">
 						<div class="ctrl">
-							<select
-								class="date-sel"
-								onchange={`location.href='/date/'+this.value${
-									selectedCategory ? `+'?category=${selectedCategory}'` : ""
-								}`}
-							>
-								{allDates.map((d) => (
-									<option value={d} selected={d === selectedDate}>
-										{fmtDate(d)}
-									</option>
-								))}
-							</select>
+							<div class="date-nav">
+								{prevDate ? (
+									<a href={`/date/${prevDate}${catQuery}`} class="date-nav-btn">
+										‹
+									</a>
+								) : (
+									<span class="date-nav-btn off">‹</span>
+								)}
+								<div class="cal-wrap">
+									<div class="date-nav-label" id="cal-trigger">
+										<span class="date-nav-date">{fmtDate(selectedDate)}</span>
+									</div>
+									<div class="cal" id="cal" />
+								</div>
+								{nextDate ? (
+									<a href={`/date/${nextDate}${catQuery}`} class="date-nav-btn">
+										›
+									</a>
+								) : (
+									<span class="date-nav-btn off">›</span>
+								)}
+							</div>
 
 							<div class="tabs">
 								<a
@@ -466,6 +564,45 @@ export function Dashboard({
 						)}
 					</div>
 				</div>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `(function(){
+  var DATES=new Set(${JSON.stringify(sortedDates)});
+  var SEL=${JSON.stringify(selectedDate)};
+  var CAT=${JSON.stringify(catQuery)};
+  var trigger=document.getElementById('cal-trigger');
+  var cal=document.getElementById('cal');
+  var open=false;
+  var vY=+SEL.slice(0,4), vM=+SEL.slice(5,7)-1;
+  function pad(n){return String(n).padStart(2,'0')}
+  function toISO(y,m,d){return y+'-'+pad(m+1)+'-'+pad(d)}
+  function todayISO(){var n=new Date(Date.now()+9*3600000);return n.toISOString().slice(0,10)}
+  var DOW=['日','月','火','水','木','金','土'];
+  var MON=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  function render(){
+    var today=todayISO();
+    var fd=new Date(vY,vM,1).getDay();
+    var dim=new Date(vY,vM+1,0).getDate();
+    var h='<div class="cal-hdr"><button class="cal-nav" id="cp">‹</button><span class="cal-month">'+vY+'年'+MON[vM]+'</span><button class="cal-nav" id="cn">›</button></div><div class="cal-grid">';
+    for(var i=0;i<7;i++)h+='<div class="cal-dow">'+DOW[i]+'</div>';
+    for(var i=0;i<fd;i++)h+='<div class="cal-day"></div>';
+    for(var d=1;d<=dim;d++){
+      var iso=toISO(vY,vM,d);
+      var cls='cal-day'+(DATES.has(iso)?' has':'')+(iso===SEL?' sel':'')+(iso===today?' today':'');
+      h+=DATES.has(iso)&&iso!==SEL
+        ?'<a class="'+cls+'" href="/date/'+iso+CAT+'">'+d+'</a>'
+        :'<div class="'+cls+'">'+d+'</div>';
+    }
+    cal.innerHTML=h+'</div>';
+    document.getElementById('cp').onclick=function(e){e.stopPropagation();vM--;if(vM<0){vM=11;vY--;}render();};
+    document.getElementById('cn').onclick=function(e){e.stopPropagation();vM++;if(vM>11){vM=0;vY++;}render();};
+  }
+  trigger.onclick=function(e){e.stopPropagation();if(open){cal.classList.remove('open');open=false;}else{render();cal.classList.add('open');open=true;}};
+  document.addEventListener('click',function(e){if(open&&!cal.contains(e.target)){cal.classList.remove('open');open=false;}});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){cal.classList.remove('open');open=false;}});
+})();`,
+					}}
+				/>
 			</body>
 		</html>
 	);

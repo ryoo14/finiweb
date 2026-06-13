@@ -12,6 +12,10 @@
 		"rss-parser": "npm:rss-parser",
 		"cheerio": "npm:cheerio"
 	},
+	"fmt": {
+		"useTabs": false,
+		"indentWidth": 2
+	},
 	"compilerOptions": {
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx"
